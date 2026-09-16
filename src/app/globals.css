@@ -24,3 +24,50 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 문서형식보기(A4 인쇄) 전용 스타일 */
+@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+
+.a4-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto 16px;
+  background: white;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+  padding: 18mm 16mm;
+  box-sizing: border-box;
+  color: #111827;
+}
+
+.a4-page-break {
+  page-break-after: always;
+  break-after: page;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0;
+    width: auto;
+  }
+  .a4-sheet {
+    box-shadow: none;
+    margin: 0;
+    width: auto;
+    min-height: 0;
+    padding: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
