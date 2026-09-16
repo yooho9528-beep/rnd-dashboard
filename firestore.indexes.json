@@ -1,0 +1,37 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "documents_plan",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "documents_input",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "documents_output",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "approval_history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "documentType", "order": "ASCENDING" },
+        { "fieldPath": "documentId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    }
+  ]
+}

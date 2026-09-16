@@ -1,0 +1,95 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userRoles() {
+      return request.auth.token.roles != null ? request.auth.token.roles : [];
+    }
+
+    function hasAnyRole(roles) {
+      return isSignedIn() && userRoles().hasAny(roles);
+    }
+
+    // 작성 가능 역할 (개발팀장 / 개발팀)
+    function isAuthorRole() {
+      return hasAnyRole(['DEV_LEAD', 'DEV_TEAM']);
+    }
+
+    // 공통 마스터: 로그인 사용자는 조회 가능, 등록/삭제는 개발팀장/품질책임자만
+    match /standards/{docId} {
+      allow read: if isSignedIn();
+      allow write: if hasAnyRole(['DEV_LEAD', 'QUALITY_HEAD']);
+    }
+
+    match /parts/{docId} {
+      allow read: if isSignedIn();
+      allow write: if hasAnyRole(['DEV_LEAD', 'QUALITY_HEAD', 'PRODUCTION']);
+    }
+
+    match /projects/{projectId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if hasAnyRole(['DEV_LEAD', 'CEO']);
+    }
+
+    match /doc_counters/{counterId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /attachments/{attachmentId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    match /approval_history/{entryId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // F702-1 개발계획서: 초안 작성/수정은 작성자 역할, 승인은 CEO
+    match /documents_plan/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isAuthorRole();
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && isAuthorRole()) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['DEV_LEAD', 'QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['CEO'])) ||
+        (resource.data.header.status == 'REJECTED' && isAuthorRole())
+      );
+      allow delete: if false;
+    }
+
+    // F702-2 개발입력서: 승인은 품질책임자
+    match /documents_input/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isAuthorRole();
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && isAuthorRole()) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['DEV_LEAD'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'REJECTED' && isAuthorRole())
+      );
+      allow delete: if false;
+    }
+
+    // F702-3 개발출력서: 승인은 품질책임자
+    match /documents_output/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isAuthorRole();
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && isAuthorRole()) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['DEV_LEAD', 'QC_TEAM'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'REJECTED' && isAuthorRole())
+      );
+      allow delete: if false;
+    }
+  }
+}
