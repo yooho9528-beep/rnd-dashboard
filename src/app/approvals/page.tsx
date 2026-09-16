@@ -6,19 +6,19 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { canPerformAction } from "@/lib/documents/workflow";
+import { collectionNameFor } from "@/lib/documents/doc-no";
 import type { DocumentHeader, DocumentTypeCode } from "@/lib/types";
 
 const DOC_TYPES: { type: DocumentTypeCode; label: string; path: string }[] = [
   { type: "PLAN", label: "개발계획서", path: "plan" },
   { type: "INPUT", label: "개발입력서", path: "input" },
   { type: "OUTPUT", label: "개발출력서", path: "output" },
+  { type: "REVIEW", label: "설계검토회의록", path: "review" },
+  { type: "VV_PLAN", label: "검증/유효성 확인계획서", path: "vv-plan" },
+  { type: "VV_REPORT", label: "검증/유효성 확인보고서", path: "vv-report" },
+  { type: "CHANGE_REQUEST", label: "설계변경요청서", path: "change-request" },
+  { type: "TRANSFER", label: "설계 및 개발 이관보고서", path: "transfer" },
 ];
-
-const COLLECTION_BY_TYPE: Record<DocumentTypeCode, string> = {
-  PLAN: "documents_plan",
-  INPUT: "documents_input",
-  OUTPUT: "documents_output",
-};
 
 interface Row {
   id: string;
@@ -42,7 +42,7 @@ export default function ApprovalsInboxPage() {
       for (const { type, label, path } of DOC_TYPES) {
         const snap = await getDocs(
           query(
-            collection(db, COLLECTION_BY_TYPE[type]),
+            collection(db, collectionNameFor(type)),
             where("header.status", "in", ["SUBMITTED", "IN_REVIEW"])
           )
         );

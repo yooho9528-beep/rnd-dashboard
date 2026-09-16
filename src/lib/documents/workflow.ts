@@ -18,6 +18,11 @@ export const AUTHOR_ROLES: Record<DocumentTypeCode, RoleCode[]> = {
   PLAN: ["DEV_LEAD", "DEV_TEAM"],
   INPUT: ["DEV_TEAM", "DEV_LEAD"],
   OUTPUT: ["DEV_TEAM", "DEV_LEAD"],
+  REVIEW: ["DEV_LEAD"],
+  VV_PLAN: ["DEV_TEAM", "DEV_LEAD"],
+  VV_REPORT: ["DEV_TEAM", "QC_TEAM"],
+  CHANGE_REQUEST: ["DEV_LEAD", "DEV_TEAM", "QC_TEAM"],
+  TRANSFER: ["DEV_LEAD"],
 };
 
 /** 문서 타입별로 검토(REVIEW) 수행 가능한 역할 */
@@ -25,13 +30,23 @@ export const REVIEWER_ROLES: Record<DocumentTypeCode, RoleCode[]> = {
   PLAN: ["DEV_LEAD", "QUALITY_HEAD"],
   INPUT: ["DEV_LEAD"],
   OUTPUT: ["DEV_LEAD", "QC_TEAM"],
+  REVIEW: ["QUALITY_HEAD", "SALES"],
+  VV_PLAN: ["QC_TEAM"],
+  VV_REPORT: ["DEV_LEAD"],
+  CHANGE_REQUEST: ["QC_TEAM"],
+  TRANSFER: ["QUALITY_HEAD"],
 };
 
-/** 문서 타입별로 최종 승인(APPROVE) 가능한 역할 (4.1, 4.3, 6.1, 6.3절 근거) */
+/** 문서 타입별로 최종 승인(APPROVE) 가능한 역할 (4.1, 4.3, 6.1, 6.3, 8.1, 11.1, 12.2절 근거) */
 export const APPROVER_ROLES: Record<DocumentTypeCode, RoleCode[]> = {
   PLAN: ["CEO"],
   INPUT: ["QUALITY_HEAD"],
   OUTPUT: ["QUALITY_HEAD"],
+  REVIEW: ["CEO"],
+  VV_PLAN: ["QUALITY_HEAD"],
+  VV_REPORT: ["QUALITY_HEAD"],
+  CHANGE_REQUEST: ["QUALITY_HEAD"],
+  TRANSFER: ["CEO"],
 };
 
 export function canPerformAction(

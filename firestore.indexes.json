@@ -25,6 +25,46 @@
       ]
     },
     {
+      "collectionGroup": "documents_review",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "documents_vv_plan",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "documents_vv_report",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "documents_change_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "documents_transfer",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "header.projectId", "order": "ASCENDING" },
+        { "fieldPath": "header.createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "approval_history",
       "queryScope": "COLLECTION",
       "fields": [

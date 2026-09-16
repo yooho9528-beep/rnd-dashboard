@@ -91,5 +91,70 @@ service cloud.firestore {
       );
       allow delete: if false;
     }
+
+    // F702-4 설계검토회의록: 검토는 품질책임자/영업부, 승인은 대표이사
+    match /documents_review/{docId} {
+      allow read: if isSignedIn();
+      allow create: if hasAnyRole(['DEV_LEAD']);
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && hasAnyRole(['DEV_LEAD'])) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['QUALITY_HEAD', 'SALES'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['CEO'])) ||
+        (resource.data.header.status == 'REJECTED' && hasAnyRole(['DEV_LEAD']))
+      );
+      allow delete: if false;
+    }
+
+    // F702-5 개발검증 및 유효성 확인계획서: 검토는 품질관리팀, 승인은 품질책임자
+    match /documents_vv_plan/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isAuthorRole();
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && isAuthorRole()) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['QC_TEAM'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'REJECTED' && isAuthorRole())
+      );
+      allow delete: if false;
+    }
+
+    // F702-6 개발검증 및 유효성 확인보고서: 검토는 개발팀장, 승인은 품질책임자
+    match /documents_vv_report/{docId} {
+      allow read: if isSignedIn();
+      allow create: if hasAnyRole(['DEV_TEAM', 'QC_TEAM']);
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && hasAnyRole(['DEV_TEAM', 'QC_TEAM'])) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['DEV_LEAD'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'REJECTED' && hasAnyRole(['DEV_TEAM', 'QC_TEAM']))
+      );
+      allow delete: if false;
+    }
+
+    // F702-7 설계변경요청서: 검토/승인은 품질관리팀/품질책임자
+    match /documents_change_request/{docId} {
+      allow read: if isSignedIn();
+      allow create: if hasAnyRole(['DEV_LEAD', 'DEV_TEAM', 'QC_TEAM']);
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && hasAnyRole(['DEV_LEAD', 'DEV_TEAM', 'QC_TEAM'])) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['QC_TEAM'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'REJECTED' && hasAnyRole(['DEV_LEAD', 'DEV_TEAM', 'QC_TEAM']))
+      );
+      allow delete: if false;
+    }
+
+    // F702-8 설계 및 개발 이관보고서: 검토는 품질책임자, 승인은 대표이사
+    match /documents_transfer/{docId} {
+      allow read: if isSignedIn();
+      allow create: if hasAnyRole(['DEV_LEAD']);
+      allow update: if isSignedIn() && (
+        (resource.data.header.status == 'DRAFT' && hasAnyRole(['DEV_LEAD'])) ||
+        (resource.data.header.status == 'SUBMITTED' && hasAnyRole(['QUALITY_HEAD'])) ||
+        (resource.data.header.status == 'IN_REVIEW' && hasAnyRole(['CEO'])) ||
+        (resource.data.header.status == 'REJECTED' && hasAnyRole(['DEV_LEAD']))
+      );
+      allow delete: if false;
+    }
   }
 }
